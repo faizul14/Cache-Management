@@ -1,0 +1,90 @@
+# #!/bin/bash
+
+# # =====================================
+# #    Cache Management Script
+# # =====================================
+
+# TITLE="Cache Management"
+# MIN_SIZE=1M  # Batas minimum cache yang akan ditampilkan
+
+# clear
+# echo "====================================="
+# echo "         $TITLE"
+# echo "====================================="
+# echo "Memindai cache di ~/.cache dengan ukuran > $MIN_SIZE"
+# echo
+
+
+# # Cari semua folder di ~/.cache yang lebih besar dari MIN_SIZE
+# mapfile -t CACHE_DIRS < <(du -sh "$HOME/.cache"/* 2>/dev/null | \
+#     awk -v min="$MIN_SIZE" '
+#     function to_bytes(size) {
+#         unit = substr(size, length(size))
+#         val = substr(size, 1, length(size)-1)
+#         if (unit == "K") return val*1024
+#         if (unit == "M") return val*1024*1024
+#         if (unit == "G") return val*1024*1024*1024
+#         return val
+#     }
+#     {
+#         if (to_bytes($1) >= to_bytes(min)) print $2
+#     }')
+
+# if [ ${#CACHE_DIRS[@]} -eq 0 ]; then
+#     echo "Tidak ada cache di atas $MIN_SIZE."
+#     exit 0
+# fi
+
+# # Loop interaktif
+# for dir in "${CACHE_DIRS[@]}"; do
+#     size=$(du -sh "$dir" 2>/dev/null | cut -f1)
+#     echo "Cache: $dir"
+#     echo "Ukuran: $size"
+#     read -p "Hapus folder ini? (y/n): " jawab
+#     case "$jawab" in
+#         y|Y)
+#             rm -rf "$dir"
+#             echo "✅ Dihapus: $dir"
+#             ;;
+#         n|N)
+#             echo "⏩ Dilewati: $dir"
+#             ;;
+#         *)
+#             echo "⚠ Jawaban tidak dikenal, dilewati."
+#             ;;
+#     esac
+#     echo
+# done
+
+# echo "=== Selesai ==="
+
+
+while true; do
+    clear
+    echo -e "====================================="
+    figlet -f standard "$TITLE"
+    echo -e "====================================="
+    echo -e "\e[0;32m             by - fmp\e[0m"
+    echo "====================================="
+    echo "1. List Cache"
+    echo "2. Manage Cache"
+    echo "3. Exit Program"
+    echo "4. Tampilkan Info Disk Usage"
+    echo "5. Log Aktivitas"
+    echo "6. Bantuan"
+    echo "====================================="
+    read -p "Pilih menu (1-6): " pilihan
+
+    case "$pilihan" in
+        1) list_cache ;;
+        2) manage_cache ;;
+        3) echo "👋 Keluar dari program..."; exit 0 ;;
+        4) disk_info ;;
+        5) show_log ;;
+        6) help_menu ;;
+        *) echo "⚠ Pilihan tidak valid." ;;
+    esac
+
+    echo
+    read -p "Tekan ENTER untuk kembali ke menu..."
+done
